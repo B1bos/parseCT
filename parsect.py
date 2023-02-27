@@ -23,28 +23,73 @@ def get_random_user_agent():
 
 
 # URL to make request
-url = 'https://api.casinoscores.com/svc-evolution-game-events/api/lightningroulette/latest'
+urls = [
+    'https://api.casinoscores.com/svc-evolution-game-events/api/lightningroulette/latest',
+    'https://api.casinoscores.com/svc-evolution-game-events/api/crazytime/latest',
+    'https://api.casinoscores.com/svc-evolution-game-events/api/monopoly/latest'
+   ]
+
 
 # File path to write results to
-csv_file = f"results{current_time}.csv"
+csv_files = [
+    f"lightningroulette_{current_time}.csv",
+    f"crazytime_{current_time}.csv",
+    f"monopoly_{current_time}.csv"
+    ]
 
-prew = ''
+prew_lightning = ''
+prew_crazy = ''
+prew_mono = ''
+
 # Make requests and write results to CSV file every 30 seconds
 while True:
-    headers = get_random_user_agent()
-    response = requests.get(url, headers=headers)
-    res_json = response.json()
-    cur_id = res_json["id"]
-    if prew == cur_id:
-        continue
-    else:
-        prew = cur_id
-        number = res_json["data"]["result"]["outcome"]["number"]
-        print(number)
+    for url, output_file in zip(urls, csv_files):
+        headers = get_random_user_agent()
+        if url == urls[0]:
+            response = requests.get(url, headers=headers)
+            res_json = response.json()
+            cur_id = res_json["id"]
+            if prew_lightning == cur_id:
+                continue
+            else:
+                prew_lightning = cur_id
+                number = res_json["data"]["result"]["outcome"]["number"]
+                print(f"lightning_{number}")
 
-    # Write results to CSV file
-        with open("result/"+csv_file, 'a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([number])
+                # Write results to CSV file
+                with open("result/" + output_file, 'a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([number])
+        elif url == urls[1]:
+            response = requests.get(url, headers=headers)
+            res_json = response.json()
+            cur_id = res_json["id"]
+            if prew_crazy == cur_id:
+                continue
+            else:
+                prew_crazy = cur_id
+                number = res_json["data"]["result"]["outcome"]["wheelResult"]["wheelSector"]
+                print(f"Crazy_{number}")
+
+                # Write results to CSV file
+                with open("result/" + output_file, 'a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([number])
+        elif url == urls[2]:
+            response = requests.get(url, headers=headers)
+            res_json = response.json()
+            cur_id = res_json["id"]
+            if prew_mono == cur_id:
+                continue
+            else:
+                prew_mono = cur_id
+                number = res_json["data"]["result"]["outcome"]["wheelResult"]
+                print(f"Mono_{number}")
+
+                # Write results to CSV file
+                with open("result/" + output_file, 'a', newline='') as file:
+                    writer = csv.writer(file)
+                    writer.writerow([number])
+
     # Wait for 30 seconds before making the next request
     time.sleep(30)
