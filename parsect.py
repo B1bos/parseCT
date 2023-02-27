@@ -37,7 +37,7 @@ while True:
         print(number)
 
     # Write results to CSV file
-        with open(csv_file, 'a', newline='') as file:
+        with open("result/"+csv_file, 'a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([number])
     # Wait for 30 seconds before making the next request
